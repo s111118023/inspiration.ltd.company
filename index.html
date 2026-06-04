@@ -493,7 +493,7 @@
       position: relative;
       transform: scale(0.85);
       transition: 0.3s ease;
-      text-align: left;
+      text-align: center;
     }
 
     .modal-overlay.open .modal-box {
@@ -1617,8 +1617,20 @@
       document.getElementById("recomDesc").innerText = desc;
       document.getElementById("selectSpirit").value = spirit;
       document.getElementById("quizResultArea").classList.remove("hidden");
-    }
+      // ==================== 【精準修正：就在這下面補上這幾行】 ====================
+    // 1. 把剛剛算出來的妖靈結果和描述，直接塞進全域進程物件中
+    playerProgress.spiritId = spirit;
+    playerProgress.faction = score.poem === max ? "管理流派" : (score.fish === max ? "突破流派" : "平衡流派"); 
+    
+    // 2. 這行最關鍵！把你剛剛抱怨看不到的「測驗結果那一行字」，正式寫入進度欄位中
+    playerProgress.quizResult = desc; 
 
+    // 3. 呼叫你最前面的更新函數，讓「觀靈員資料表」格子立刻同步刷新、把這行字畫出來！
+    if (typeof updateDashboard === "function") {
+      updateDashboard();
+    }
+    // =========================================================================
+  }
     // 額外優化：新玩家自選時同步更正寫死的密碼資料
     function confirmCharacter() {
       if (!currentUser) { alert("❌ 偵測不到登入憑證！"); return; }
