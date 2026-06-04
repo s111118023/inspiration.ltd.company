@@ -1421,7 +1421,18 @@
       { id: "node9", name: "司馬庫斯-檜靈", localSpirit: "司馬庫斯-檜靈" }
     ];
 
-    let spiritVotes = { "陽明山-大屯靈王": 0, "臺北劍潭-詩魂": 0, "小琉球-珊鯉": 0, "臺中南屯-金穿山甲": 0, "瑪璘窟-鏡靈鼓": 0, "司馬庫斯-檜靈": 0, "南投竹山-小竹童": 0, "苗栗大坑-瓜鬼": 0, "水金九-金瓜兒": 0, }
+// 【修改後】優先從瀏覽器小本本撈紀錄，如果沒有才用預設值 0 票
+let spiritVotes = JSON.parse(localStorage.getItem('spiritVotes')) || { 
+  "陽明山-大屯靈王": 0, 
+  "臺北劍潭-詩魂": 0, 
+  "小琉球-珊鯉": 0, 
+  "臺中南屯-金穿山甲": 0, 
+  "瑪璘窟-鏡靈鼓": 0, 
+  "司馬庫斯-檜靈": 0, 
+  "南投竹山-小竹童": 0, 
+  "苗栗大坑-瓜鬼": 0, 
+  "水金九-金瓜兒": 0 
+};
 
     const journalEvents = [
       { title: "【觀察日記】地底板塊熔融", text: "岩漿緩緩地流淌於地面時，是曾經有位妖靈誕辰日的景況。", img: "assets/images/白.png" },
@@ -1887,7 +1898,7 @@
 
       // 模擬 AI 思考延遲並給出世界觀對應的回覆
       setTimeout(() => {
-        let reply = "收到您的諮詢。島嶼靈能主機正與陽明山總部連線中……如有觀靈員檢測狀態異常，可前往「觀察日記」開啟潛能測驗。";
+        let reply = "收到您的諮詢。島嶼靈能主機正與陽明山總部連線中……如有觀靈員檢測狀態異常，可前往「觀察日記」開啟潛能測驗。歡迎搜尋其他關鍵字「妖靈」「觀靈」「派系」「商品」";
         const lowerText = text.toLowerCase();
 
         if (lowerText.includes("世界觀") || lowerText.includes("設定") || lowerText.includes("故事")) {
@@ -1972,8 +1983,13 @@
       refreshVoteRank();
     };
 
-    function voteSpirit(name) {
-      const spirit = spiritDatabase[name]; spiritVotes[name]++;
+   function voteSpirit(name) {
+      const spirit = spiritDatabase[name]; 
+      spiritVotes[name]++; // 票數加 1
+      
+      // 🔥 新增這一行：把最新票數即時存入瀏覽器，重新整理就不會消失了！
+      localStorage.setItem('spiritVotes', JSON.stringify(spiritVotes));
+      
       document.getElementById(`v-${spirit.id}`).innerText = spiritVotes[name];
       refreshVoteRank();
     }
